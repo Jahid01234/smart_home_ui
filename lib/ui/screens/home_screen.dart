@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:lottie/lottie.dart';
 import 'package:smart_home_ui/resources/appConfig/app_config.dart';
+import 'package:smart_home_ui/ui/screens/ads_show_screen.dart';
 import 'package:smart_home_ui/ui/widgets/smart_devices_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -145,6 +146,15 @@ class _HomeScreenState extends State<HomeScreen> {
              child: AdWidget(ad:bannerAd),
           )
           : null,
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context)=> const AdsShowScreen(),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
