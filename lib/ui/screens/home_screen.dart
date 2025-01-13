@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:lottie/lottie.dart';
+import 'package:smart_home_ui/resources/appConfig/app_config.dart';
 import 'package:smart_home_ui/ui/widgets/smart_devices_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,10 +14,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // create Banner Ads Instance..
+  late BannerAd bannerAd;
+  bool isLoaded = false;
 
   List mySmartDevices = [
     //[DeviceName,iconPath,powerStatus]
-    ["Smart Light", "assets/images/light_bulb.png", true],
+    ["Smart Light", "assets/images/light_bulb.png", false],
     ["Smart AC", "assets/images/air_conditioner.png", true],
     ["Smart TV", "assets/images/smart_tv.png", false],
     ["Smart Fan", "assets/images/fan.png", false],
@@ -26,6 +32,11 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {});
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _bannerAdsSection();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,6 +138,36 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+      bottomNavigationBar: isLoaded
+          ? SizedBox(
+             height: bannerAd.size.height.toDouble(),
+             width:  bannerAd.size.width.toDouble(),
+             child: AdWidget(ad:bannerAd),
+          )
+          : null,
     );
   }
+
+  // show banner ads implements......
+  void _bannerAdsSection(){
+    bannerAd = BannerAd(
+        size: AdSize.banner,
+        adUnitId: AppConfig.bannerAdsID,
+        listener: BannerAdListener(
+          onAdLoaded: (Ad ad){
+            isLoaded = true;
+            setState(() {});
+          },
+          onAdFailedToLoad: (Ad ad, LoadAdError error){
+            ad.dispose();
+            if (kDebugMode) {
+              print(error);
+            }
+          },
+        ),
+        request: const AdRequest(),
+    );
+    bannerAd.load();
+  }
+
 }
